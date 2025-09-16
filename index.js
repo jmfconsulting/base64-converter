@@ -1,14 +1,18 @@
 const express = require("express");
 const multer = require("multer");
+
 const app = express();
 const upload = multer();
 
+// Endpoint que recibe un archivo y lo convierte a base64 en formato válido para OpenAI
 app.post("/encode", upload.single("file"), (req, res) => {
-  if (!req.file) return res.status(400).send("No file uploaded");
+  if (!req.file) {
+    return res.status(400).send("No file uploaded");
+  }
 
   const base64 = req.file.buffer.toString("base64");
 
-  // ⚡ Forzamos a "audio/mp3" porque es lo que soporta OpenAI
+  // 🔑 Devolvemos exactamente lo que OpenAI espera: data:audio/mp3;base64,...
   res.send(`data:audio/mp3;base64,${base64}`);
 });
 
