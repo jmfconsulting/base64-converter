@@ -10,10 +10,19 @@ app.post("/encode", upload.single("file"), (req, res) => {
     return res.status(400).send("No file uploaded");
   }
 
-  const base64 = req.file.buffer.toString("base64");
+  try {
+    const base64 = req.file.buffer.toString("base64");
 
-  // 🔑 Devolvemos exactamente lo que OpenAI espera: data:audio/mp3;base64,...
-  res.send(`data:audio/mp3;base64,${base64}`);
+    // 🚫 Nunca usamos req.file.mimetype (porque a veces es audio/mpeg)
+    // ✅ Siempre forzamos a audio/mp3 para evitar el error de OpenAI
+    const result = `data:audio/mp3;base64,${base64}`;
+
+    // Devolver texto plano sin JSON, exactamente como OpenAI lo quiere
+    res.type("text/plain").send(result);
+  } catch (err) {
+    console.error("❌ Error encoding file:", err);
+    res.status(500).send("Internal Server Error while encoding file");
+  }
 });
 
 const PORT = process.env.PORT || 10000;
