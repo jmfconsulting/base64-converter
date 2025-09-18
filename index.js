@@ -5,23 +5,30 @@ const app = express();
 
 // ✅ Tus credenciales de ACRCloud
 const ACCESS_KEY = "bc913984dd714bd96f1c72583ba01301";
-const SECRET_KEY = "2Jm4zb...tu_secret..."; // ⚠️ pon aquí tu Secret Key completa
+const SECRET_KEY = "2Jm4zb...tu_secret..."; // ⚠️ pega aquí tu Secret Key completa
 
 // 🔑 Endpoint para generar firma para ACRCloud
 app.get("/acr-sign", (req, res) => {
   try {
     const timestamp = Math.floor(Date.now() / 1000);
 
-    // 📌 String EXACTO que ACRCloud exige
-    const stringToSign = `POST\n/v1/identify\n${ACCESS_KEY}\naudio\n1\n${timestamp}`;
+    // String EXACTO que ACRCloud exige
+    const stringToSign = [
+      "POST",
+      "/v1/identify",
+      ACCESS_KEY,
+      "audio",          // <-- data_type
+      "1",              // <-- signature_version
+      timestamp
+    ].join("\n");
 
-    // 🔐 Generar firma HMAC-SHA1 con secret key y salida en base64
+    // Generar firma HMAC-SHA1 con secret key y salida en base64
     const signature = crypto
       .createHmac("sha1", SECRET_KEY)
       .update(stringToSign)
       .digest("base64");
 
-    // 👉 Devolvemos también el stringToSign para poder comprobar
+    // Devolvemos también el stringToSign para debug
     res.json({
       access_key: ACCESS_KEY,
       timestamp,
