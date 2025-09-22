@@ -5,7 +5,7 @@ const app = express();
 
 // ✅ Tus credenciales de ACRCloud
 const ACCESS_KEY = "bc913984dd714bd96f1c72583ba01301";
-const SECRET_KEY = "2Jm4zb...tu_secret..."; // ⚠️ pega aquí tu Secret Key completa
+const SECRET_KEY = "2Jm4zbnhtZWekz72G44QE43bypGVeNCupBKBcZ6o"; // ⚠️ pega aquí tu Secret Key completa
 
 // 🔑 Endpoint para generar firma para ACRCloud
 app.get("/acr-sign", (req, res) => {
